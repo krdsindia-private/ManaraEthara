@@ -1,0 +1,63 @@
+﻿trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+  vsSolutionName: DeployOnPremSite
+  vsProjectName: DeployOnPremSite
+  umbracoDeployTriggerDeploy: $(Build.SourcesDirectory)\$(vsSolutionName)\$(vsProjectName)\TriggerDeploy.ps1
+  umbracoDeployReason: AzureDeployment
+
+
+  deployApiSecret: <set in Azure Pipeline secret>
+  azureSubscription: 6805f09f-35c6-4433-ae85-6dfa9c6f63e6
+  webAppName: manar-ethara
+  resourceGroupName: manar
+  deploySlotName: <set in Azure Pipeline variable>
+  deployBaseUrl: <set in Azure Pipeline variable>
+
+steps:
+#1 NuGet Tool Install
+- task: NuGetToolInstaller@1
+  displayName: Install NuGet
+
+#2 NuGet Restore
+- task: NuGetCommand@2
+  displayName: Restore NuGet packages
+  inputs:
+    restoreSolution: '$(solution)'
+
+#3 Build the VS Solution and publish the output to a zip file
+- task: VSBuild@1
+  displayName: Build solution
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+#4 Deploy to an Azure web app slot
+- task: AzureRmWebAppDeployment@4
+  displayName: Deploy to web app
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: '$(azureSubscription)'
+    appType: 'webApp'
+    WebAppName: '$(webAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: '$(deploySlotName)'
+    packageForLinux: '$(build.artifactStagingDirectory)\WebApp.zip'
+
+#5 Trigger the Umbraco Deploy extraction
+- task: PowerShell@2
+  displayName: Run PowerShell script
+  inputs:
+    filePath: '$(umbracoDeployTriggerDeploy)'
+    arguments: '-InformationAction:Continue -Action TriggerWithStatus -ApiSecret $(deployApiSecret) -BaseUrl $(deployBaseUrl) -Reason $(umbracoDeployReason) -Verbose'
