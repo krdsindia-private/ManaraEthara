@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
-using Microsoft.Extensions.DependencyInjection;
-using Umbraco.Cms.Core.DependencyInjection;
 
 namespace ManarEthara {
     public static class BackofficeAuthenticationExtensions {
@@ -24,7 +22,7 @@ namespace ManarEthara {
 
                                 options.TokenEndpoint = $"https://login.microsoftonline.com/8b3ac275-fcdd-4f2f-a2bc-e99673ba2719/oauth2/v2.0/token";
 
-                                options.AuthorizationEndpoint = $"https://login.microsoftonline.com/8b3ac275-fcdd-4f2f-a2bc-e99673ba2719/oauth2/v2.0/authorize";                                    
+                                options.AuthorizationEndpoint = $"https://login.microsoftonline.com/8b3ac275-fcdd-4f2f-a2bc-e99673ba2719/oauth2/v2.0/authorize";
                             });
                     });
             });

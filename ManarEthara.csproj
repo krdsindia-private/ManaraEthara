@@ -48,6 +48,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="App_Plugins\ExportDashboard\enquiryexport.html" />
+    <Content Include="App_Plugins\ExportDashboard\newsletterexport.html" />
     <Content Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\css\styles.css" />
     <Content Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\views\configuration.html" />
     <Content Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\views\formpicker.html" />
@@ -56,6 +58,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="App_Plugins\ExportDashboard\enquiryexport.controller.js" />
+    <None Include="App_Plugins\ExportDashboard\newsletterexport.controller.js" />
+    <None Include="App_Plugins\ExportDashboard\package.manifest" />
     <None Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\js\configuration.controller.js" />
     <None Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\js\dynamics.resource.js" />
     <None Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\js\formpicker.controller.js" />
@@ -64,10 +69,6 @@
     <None Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\Render\DynamicsForm.cshtml" />
     <None Include="App_Plugins\UmbracoCms.Integrations\Crm\Dynamics\Render\DynamicsFormV8.cshtml" />
     <None Include="D:\ManarEthara\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="App_Plugins\CustomWelcomeDashboard\" />
   </ItemGroup>
   
 </Project>

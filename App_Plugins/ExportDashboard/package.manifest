@@ -1,0 +1,24 @@
+{
+    "propertyEditors": [],
+    "javascript": [
+        "~/App_Plugins/ExportDashboard/enquiryexport.controller.js",
+        "~/App_Plugins/ExportDashboard/newsletterexport.controller.js"
+    ],
+    "css": [],
+    "js": [],
+    "cssMinified": [],
+    "jsMinified": [],
+    "propertyActions": [],
+    "dashboards": [
+        {
+            "alias": "NewsletterExport",
+            "view": "/App_Plugins/ExportDashboard/newsletterexport.html",
+            "sections": ["content"]
+        },
+        {
+            "alias": "EnquiryExport",
+            "view": "/App_Plugins/ExportDashboard/enquiryexport.html",
+            "sections": ["content"]
+        }
+    ]
+}

@@ -112,13 +112,13 @@ namespace ManarEthara.Controllers.Api {
 
 
         [HttpGet]
-        public IActionResult ExportNewsletterRequestsToCsv() {
+        public IActionResult ExportNewsletterRequestsToCsv(DateTime startDate, DateTime endDate) {
             try {
 
                 var contentService = _contentService;
 
 
-                var parentItem = contentService.GetById(Guid.Parse("fff6917a-326f-4146-9474-6ecc8e9ee382"));
+                var parentItem = contentService.GetById(Guid.Parse("1c3c72df-9fdd-454e-bed4-728ae202ae04"));
 
                 if (parentItem == null) {
                     return NotFound("Parent content item not found");
@@ -126,12 +126,18 @@ namespace ManarEthara.Controllers.Api {
 
 
                 var newsletterRequestNodes = contentService.GetPagedChildren(parentItem.Id, 0, int.MaxValue, out _)
-               .Where(node => node.Published)
-               .ToList();
+             .Where(node => node.Published &&
+                             node.UpdateDate >= startDate &&
+                             node.UpdateDate <= endDate)
+             .ToList();
 
+                var errResponse = new {
+
+                    Message = "No data found",
+                };
 
                 if (!newsletterRequestNodes.Any()) {
-                    return NotFound("No published newsletter requessts found");
+                    return Ok(errResponse);
                 }
 
 

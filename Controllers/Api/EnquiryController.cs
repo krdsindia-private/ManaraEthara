@@ -93,6 +93,79 @@ namespace ManarEthara.Controllers.Api {
             }
         }
 
+        [HttpGet]
+        public IActionResult ExportEnquiryRequestsToCsv(DateTime startDate, DateTime endDate) {
+            try {
+
+                var contentService = _contentService;
+
+
+                var parentItem = contentService.GetById(Guid.Parse("25993880-8e35-4be3-87d7-1c15e5786a71"));
+                var errResponse = new {
+
+                    Message = "No data found",
+                };
+
+                if (parentItem == null) {
+                    return Ok(errResponse);
+                }
+
+
+                var enquiryRequestNodes = contentService.GetPagedChildren(parentItem.Id, 0, int.MaxValue, out _)
+             .Where(node => node.Published &&
+                             node.UpdateDate >= startDate &&
+                             node.UpdateDate <= endDate)
+             .ToList();
+
+
+                if (!enquiryRequestNodes.Any()) {
+                    return Ok(errResponse);
+                }
+
+
+                var enquiryRequests = new List<EnquiryRequest>();
+
+                foreach (var node in enquiryRequestNodes) {
+
+                    var name = node.GetValue<string>("enquiryname");
+                    var email = node.GetValue<string>("email");
+                    var mobile = node.GetValue<string>("mobilenumber");
+                    var message = node.GetValue<string>("message");
+
+                    enquiryRequests.Add(new EnquiryRequest {
+                        fullName = name,
+                        email = email,
+                        mobile = mobile,
+                        message = message,
+                    });
+                }
+
+
+                var csvData = ExportToCsv(enquiryRequests);
+                var csvFileName = "enquiry_requests.csv";
+                var csvFileBytes = System.Text.Encoding.UTF8.GetBytes(csvData);
+
+                return File(csvFileBytes, "text/csv", csvFileName);
+            }
+            catch (Exception ex) {
+
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        private string ExportToCsv(IEnumerable<EnquiryRequest> enquiryRequests) {
+            var csv = new System.Text.StringBuilder();
+
+            csv.AppendLine("Fullname,Email,Mobile,Message");
+
+            foreach (var request in enquiryRequests) {
+                csv.AppendLine($"{request.fullName},{request.email},{request.mobile},{request.message}");
+            }
+
+
+            return csv.ToString();
+        }
+
 
 
     }
